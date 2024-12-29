@@ -12,7 +12,7 @@ def cli():
 @cli.command()
 @click.option(
     "--config-file",
-    default="mongodb_migrator_config.yaml",
+    default="mongrate_config.yaml",
     help="Path to the config file.",
 )
 def init(config_file):
@@ -26,7 +26,7 @@ def init(config_file):
 @click.argument("name")
 @click.option(
     "--config-file",
-    default="mongodb_migrator_config.yaml",
+    default="mongrate_config.yaml",
     help="Path to the config file.",
 )
 def create(name, config_file):
@@ -39,7 +39,7 @@ def create(name, config_file):
 @click.argument("target", required=False, default="all")
 @click.option(
     "--config-file",
-    default="mongodb_migrator_config.yaml",
+    default="mongrate_config.yaml",
     help="Path to the config file.",
 )
 def upgrade(target, config_file):
@@ -55,7 +55,7 @@ def upgrade(target, config_file):
 @click.argument("target", required=False, default="all")
 @click.option(
     "--config-file",
-    default="mongodb_migrator_config.yaml",
+    default="mongrate_config.yaml",
     help="Path to the config file.",
 )
 def downgrade(target, config_file):
@@ -70,7 +70,7 @@ def downgrade(target, config_file):
 @cli.command()
 @click.option(
     "--config-file",
-    default="mongodb_migrator_config.yaml",
+    default="mongrate_config.yaml",
     help="Path to the config file.",
 )
 def history(config_file):

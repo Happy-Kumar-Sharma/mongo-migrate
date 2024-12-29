@@ -20,7 +20,7 @@ def get_requirements(file_path: str) -> list[str]:
 
 setup(
     name="mongrate",
-    version="0.0.1",
+    version="0.0.5",
     description="A MongoDB migration tool.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -37,7 +37,7 @@ setup(
     install_requires=get_requirements("requirements.txt"),
     entry_points={
         "console_scripts": [
-            "mongodb-migrator=mongodb_migrator.cli:cli",
+            "mongrate=mongodb_migrator.cli:cli",
         ],
     },
     classifiers=[
