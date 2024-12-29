@@ -6,7 +6,7 @@ from datetime import datetime
 import pymongo
 import yaml  # type: ignore
 
-DEFAULT_CONFIG_FILE = "mongodb_migrator_config.yaml"
+DEFAULT_CONFIG_FILE = "mongrate_config.yaml"
 
 
 def create_default_config(config_file=DEFAULT_CONFIG_FILE):
@@ -48,12 +48,10 @@ class MongoDBMigrator:
         if not os.path.exists(self.migrations_dir):
             os.makedirs(self.migrations_dir)
             print(f"Created migrations directory: {self.migrations_dir}")
+            print(f"\033[92mConfigure {DEFAULT_CONFIG_FILE} now...\033[0m")
         else:
             print(f"Migrations directory already exists: {self.migrations_dir}")
-
-        if "_migrations" not in self.db.list_collection_names():
-            self.db.create_collection("_migrations")
-            print("Initialized migrations tracking collection in the database.")
+            print(f"\033[92mConfigure {DEFAULT_CONFIG_FILE} now...\033[0m")
 
     def create_migration(self, name):
         """Create a new migration file."""
@@ -78,56 +76,91 @@ def downgrade(db):
 
     def apply_migrations(self, target=None):
         """Apply migrations up to a specific target."""
+        # Fetch applied migrations from the database
         applied_migrations = {
             doc["migration"] for doc in self.migrations_collection.find()
         }
         migration_files = sorted(os.listdir(self.migrations_dir))
         applied = False
 
+        # Iterate over the migration files and apply them
         for filename in migration_files:
             if filename.endswith(".py") and filename not in applied_migrations:
                 if target and filename > target:
-                    break
+                    break  # Stop if we reached the target migration
 
+                # Construct the full path to the migration file
+                filepath = os.path.join(self.migrations_dir, filename)
+
+                # Check if the file exists before attempting to import
+                if not os.path.exists(filepath):
+                    print(f"Migration file {filename} not found. Skipping application")
+                    continue
+
+                # Dynamically import the migration module
                 module_name = f"{self.migrations_dir}.{filename[:-3]}"
-                # import pdb; pdb.set_trace()
-                migration = importlib.import_module(module_name)
+                try:
+                    spec = importlib.util.spec_from_file_location(module_name, filepath)
+                    migration = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(migration)  # Load the module
 
-                print(f"Applying migration: {filename}")
-                migration.upgrade(self.db)
-                self.migrations_collection.insert_one({"migration": filename})
-                print(f"Applied: {filename}")
-                applied = True
+                    print(f"Applying migration: {filename}")
+                    migration.upgrade(self.db)  # Execute the upgrade function
+                    self.migrations_collection.insert_one({"migration": filename})
+                    print(f"Applied: {filename}")
+                    applied = True
 
-                if target and filename == target:
-                    break
+                    if target and filename == target:
+                        break  # Stop once we reach the target migration
+
+                except Exception as e:
+                    print(f"Error during application of {filename}: {e}")
+                    continue
 
         if not applied:
             print("No pending migrations to apply.")
 
     def rollback_migrations(self, target=None):
         """Rollback migrations down to a specific target."""
+        # Fetch applied migrations from the database and sort in reverse order
         applied_migrations = list(
             doc["migration"] for doc in self.migrations_collection.find()
         )
-        applied_migrations.sort(reverse=True)
+        applied_migrations.sort(reverse=True)  # Rollback in reverse order
         reverted = False
 
+        # Iterate over the applied migrations and rollback
         for filename in applied_migrations:
             if target and filename <= target:
-                break
+                break  # Stop once we reach the target migration for rollback
 
+            # Construct the full path to the migration file
+            filepath = os.path.join(self.migrations_dir, filename)
+
+            # Check if the file exists before attempting to import
+            if not os.path.exists(filepath):
+                # print(f"Migration file {filename} not found. Skipping rollback.")
+                continue
+
+            # Dynamically import the migration module
             module_name = f"{self.migrations_dir}.{filename[:-3]}"
-            migration = importlib.import_module(module_name)
+            try:
+                spec = importlib.util.spec_from_file_location(module_name, filepath)
+                migration = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(migration)  # Load the module
 
-            print(f"Rolling back migration: {filename}")
-            migration.downgrade(self.db)
-            self.migrations_collection.delete_one({"migration": filename})
-            print(f"Rolled back: {filename}")
-            reverted = True
+                print(f"Rolling back migration: {filename}")
+                migration.downgrade(self.db)  # Execute the downgrade function
+                self.migrations_collection.delete_one({"migration": filename})
+                print(f"Rolled back: {filename}")
+                reverted = True
 
-            if target and filename == target:
-                break
+                if target and filename == target:
+                    break  # Stop once we reach the target migration for rollback
+
+            except Exception as e:
+                print(f"Error during rollback of {filename}: {e}")
+                continue
 
         if not reverted:
             print("No migrations to rollback.")
