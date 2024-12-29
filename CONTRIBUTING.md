@@ -80,4 +80,9 @@ Test migration while development
 ```shell script
 python -m mongodb_migrator.cli init
 python -m mongodb_migrator.cli create create_new_collection
+python -m mongodb_migrator.cli history
+python -m mongodb_migrator.cli upgrade all
+python -m mongodb_migrator.cli downgrade all
+python -m mongodb_migrator.cli upgrade 20241228230118_create_new_1.py
+python -m mongodb_migrator.cli downgrade 20241228230118_create_new_1.py
 ```
