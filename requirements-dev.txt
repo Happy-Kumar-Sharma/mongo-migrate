@@ -1,0 +1,11 @@
+click
+pymongo
+pytest
+pyyaml
+mypy
+flake8
+pyupgrade
+isort
+black
+check-json
+pytest-mock
