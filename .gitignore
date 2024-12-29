@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# Testing migration
+mongodb_migrator_config.yaml
+migrations/
+tests_migrations/
+
 # Distribution / packaging
 .Python
 build/
