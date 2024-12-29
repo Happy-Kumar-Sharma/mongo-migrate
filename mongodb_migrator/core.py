@@ -1,10 +1,13 @@
-import os
-import pymongo
+# flake8: noqa
 import importlib
-import yaml
+import os
 from datetime import datetime
 
+import pymongo
+import yaml  # type: ignore
+
 DEFAULT_CONFIG_FILE = "mongodb_migrator_config.yaml"
+
 
 def create_default_config(config_file=DEFAULT_CONFIG_FILE):
     """Create a default configuration file."""
@@ -12,7 +15,7 @@ def create_default_config(config_file=DEFAULT_CONFIG_FILE):
         config = {
             "db_url": "mongodb://mongoadmin:secret@localhost:27017",
             "db_name": "my_database",
-            "migrations_dir": "migrations"
+            "migrations_dir": "migrations",
         }
         with open(config_file, "w") as f:
             yaml.dump(config, f)
@@ -20,12 +23,14 @@ def create_default_config(config_file=DEFAULT_CONFIG_FILE):
     else:
         print(f"Config file already exists: {config_file}")
 
+
 def load_config(config_file=DEFAULT_CONFIG_FILE):
     """Load the configuration from the file."""
     if not os.path.exists(config_file):
         raise FileNotFoundError(f"Config file not found: {config_file}")
     with open(config_file, "r") as f:
         return yaml.safe_load(f)
+
 
 class MongoDBMigrator:
     def __init__(self, config_file=DEFAULT_CONFIG_FILE):
@@ -73,9 +78,9 @@ def downgrade(db):
 
     def apply_migrations(self, target=None):
         """Apply migrations up to a specific target."""
-        applied_migrations = set(
+        applied_migrations = {
             doc["migration"] for doc in self.migrations_collection.find()
-        )
+        }
         migration_files = sorted(os.listdir(self.migrations_dir))
         applied = False
 
