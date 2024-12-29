@@ -44,4 +44,5 @@ jobs:
 
       # Step 7: Run tests
       - name: Run tests
-        run: pytest tests/ -vv  # Adjust the command if needed (e.g., specify test directory)
+        run: MOCK_DB=true pytest tests/ -vv  # Run without db connection
+        # run: pytest tests/ -vv  # Run with db connection
