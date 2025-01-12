@@ -49,10 +49,6 @@ class TestMongoDBMigrator(unittest.TestCase):
         self.assertTrue(
             any("test_migration1.py" in history for history in history["applied"])
         )
-        # Uncomment for pending migration check if needed
-        # self.assertTrue(
-        #     any("test_migration2.py" in history for history in history["pending"])
-        # )
 
     def test_zzzz_delete_migration(self):
         import shutil
