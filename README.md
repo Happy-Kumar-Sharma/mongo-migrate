@@ -2,6 +2,13 @@
 A lightweight MongoDB migration tool.
 
 ---
+[![Documentation](https://readthedocs.org/projects/mongrate/badge/?version=latest)](https://readthedocs.org/projects/mongrate/badge/?version=latest)
+[![PyPI version](https://badge.fury.io/py/mongrate.svg)](https://badge.fury.io/py/mongrate.svg)
+[![Python](https://img.shields.io/pypi/pyversions/mongrate.svg)](https://pypi.org/project/mongrate/)
+[![Security Check](https://github.com/Happy-Kumar-Sharma/mongo-migrate/actions/workflows/bandit.yml/badge.svg)](https://github.com/Happy-Kumar-Sharma/mongo-migrate/actions/workflows/bandit.yml/badge.svg)
+[![CI-CD Pipeline](https://github.com/Happy-Kumar-Sharma/mongo-migrate/actions/workflows/cicd.yml/badge.svg)](https://github.com/Happy-Kumar-Sharma/mongo-migrate)
+[![CodeQL](https://github.com/Happy-Kumar-Sharma/mongo-migrate/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Happy-Kumar-Sharma/mongo-migrate)
+[![GitHub Repo stars](https://img.shields.io/github/stars/Happy-Kumar-Sharma/mongo-migrate)](https://github.com/Happy-Kumar-Sharma/mongo-migrate)
 
 ## **Overview**
 Mongrate simplifies managing schema changes in MongoDB. It provides a robust migration system to track, apply, and rollback changes to your MongoDB database.
